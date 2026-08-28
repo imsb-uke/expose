@@ -56,18 +56,21 @@ The code requires:
 
 ### VFM Embeddings
 
-We use **H0-mini** ([Hugging Face Link](https://huggingface.co/bioptimus/H0-mini)) to extract embeddings from TMA spots.
+We use **H0-mini** ([Hugging Face Link](https://huggingface.co/bioptimus/H0-mini)) to extract embeddings from TMA spot images.
 
-The embeddings should have shape:
+The embeddings should have a shape of:
 
 ```text
 n_patches × embedding_dim
 ```
 
-and should be stored in:
+and each image patch features should be stored as a separate HDF5 file in ```data/embeddings/``` like this:
 
-```text
-data/embeddings/
+```python
+import h5py
+embedding_path = "data/embeddings/..."
+with h5py.File(embedding_path, 'w') as file:
+   file.create_dataset("patch_features", data = patch_features)
 ```
 
 For example:
@@ -75,8 +78,8 @@ For example:
 ```text
 data/
 ├── embeddings/
-│   ├── sample_001.pt
-│   ├── sample_002.pt
+│   ├── sample_001.h5
+│   ├── sample_002.h5
 │   └── ...
 └── metadata.csv
 ```
@@ -109,7 +112,7 @@ The identifiers and paths specified in `metadata.csv` must correspond to the ava
 
 A metadata file may look like:
 
-```text
+```csv
 sample_id,domain,domain_label,relapse_label,embedding_path,split
 0,domain1,0,0,sample_0.h5,train
 1,domain1,0,0,sample_0.h5,val
